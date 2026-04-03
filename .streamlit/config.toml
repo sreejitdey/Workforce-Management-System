@@ -1,0 +1,15 @@
+[theme]
+# This changes the color of Buttons, Checkboxes, Sliders and the active Tab line
+primaryColor = "#236995"
+
+# This is the background of the main content area
+backgroundColor = "#192036"
+
+# This is the background of the sidebar and input widgets
+secondaryBackgroundColor = "#0c3a57"
+
+# The color of your text
+textColor = "#ffffff"
+
+# The font style
+font = "sans serif"
