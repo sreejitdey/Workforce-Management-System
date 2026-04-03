@@ -1,0 +1,6 @@
+pandas
+openpyxl
+streamlit
+sqlalchemy
+psycopg2-binary
+streamlit_cookies_manager
