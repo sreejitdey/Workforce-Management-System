@@ -1,15 +1,20 @@
 [theme]
-# This changes the color of Buttons, Checkboxes, Sliders and the active Tab line
+# Change the color of Buttons, Checkboxes, Sliders and active Tab line
 primaryColor = "#236995"
 
-# This is the background of the main content area
+# Change the background of main content area
 backgroundColor = "#192036"
 
-# This is the background of the sidebar and input widgets
+# Change the background of sidebar and input widgets
 secondaryBackgroundColor = "#0c3a57"
 
-# The color of your text
+# Change the text color
 textColor = "#ffffff"
 
-# The font style
+# Change the font style
 font = "sans serif"
+
+[client]
+# Hide the deprecated warning specifically
+showErrorDetails = false
+showSidebarNavigation = true
