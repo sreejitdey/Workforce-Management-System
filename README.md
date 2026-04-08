@@ -425,14 +425,3 @@ This tab provides a secure management console for ongoing tracks.
 A self-service security utility for the Track Lead.
 
 **Logic:** The code validates that the old password is correct via a database query, ensures the new password and confirmation password match, verifies the new password is not identical to the old one, and then commits the plaintext string to the "User" table.
-
-12. Application Interface Visuals
-System Walkthrough & User Interface Gallery
-
-12.1. Admin Login Page
-<img width="588" height="327" alt="image" src="https://github.com/user-attachments/assets/718f84af-61ec-4603-9df2-7a305fa1f692" />
-
-12.2. Admin Portal
-<img width="588" height="486" alt="image" src="https://github.com/user-attachments/assets/cb373363-4ea6-49c9-88b6-ea31d1dd354e" />
-
-
