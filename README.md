@@ -1,10 +1,10 @@
-**📚 Workforce Management System**
+# **📚 Workforce Management System**
 
-**1. Executive Summary**
+## **1. Executive Summary**
 
 The Workforce Management System is a comprehensive, multi-tenant web application designed to streamline resource allocation, track daily workforce availability, and mathematically forecast project Estimated Times of Arrival (ETAs). Built with a role-based architecture, the system enforces strict data privacy across four management tiers (Administrators, Technical Program Managers, Team Leads, and Track Leads), ensuring a secure and efficient operational lifecycle.
 
-**2. Project Architecture & Directory Structure**
+## **2. Project Architecture & Directory Structure**
 
 The Workforce Management System follows a modular, scalable architecture designed to separate concerns between the user interface, routing, and data management. This ensures secure handling of role-based access and seamless integration with the PostgreSQL backend.
 
@@ -13,48 +13,28 @@ The repository is organized as follows:
 **WORKFORCE-MANAGEMENT-SYSTEM/**
 
 **│**
-
 **├── .streamlit/**
-
 **│ └── config.toml** *\#Application-level configuration*
-
 **│**
-
 **├── data/**
-
 **│ └── data.db** *\#Local SQLite database for localhost*
-
 **│**
-
 **├── database/**
-
 **│ ├── \_\_init\_\_.py**
-
 **│ ├── database.py** *\#Database connection engine and session management*
-
 **│ └── models.py** *\#ORM models defining the database schema and relationships*
-
 **│**
-
 **├── views/**
-
 **│ ├── \_\_init\_\_.py**
-
 **│ ├── admin_page.py** *\#Interface and logic for System Administrators*
-
 **│ ├── teamlead_page.py** *\#Interface for Language Team Leads*
-
 **│ ├── tpm_page.py** *\#Interface for Technical Program Managers*
-
 **│ └── tracklead_page.py** *\#Interface for Track Lead for ETA planning*
-
 **│**
-
 **├── app.py** *\#Main application entry point and routing handler*
-
 **└── requirements.txt** *\#Project dependencies and library versions*
 
-**3. Environment & Core Dependencies**
+## **3. Environment & Core Dependencies**
 
 The application relies on a robust stack of Python libraries, specified in the requirements.txt file, to handle everything from frontend rendering to database connectivity and data processing.
 
@@ -70,11 +50,11 @@ The application relies on a robust stack of Python libraries, specified in the r
 
 - **Data Processing:** pandas and openpyxl are included for complex data manipulation, aggregation, and likely the importing/exporting of Excel-based workforce reports.
 
-**4. Data Architecture & Schema (models.py)**
+## **4. Data Architecture & Schema (models.py)**
 
 The system relies on a relational database structured via SQLAlchemy. The schema is normalized to separate system access control (User) from operational workforce tracking (Employee), while maintaining strict hierarchical and transactional integrity.
 
-**4.1. System Configuration & Access**
+### **4.1. System Configuration & Access**
 
 Tables dedicated to application setup and user access control.
 
@@ -83,7 +63,7 @@ Tables dedicated to application setup and user access control.
 | **SystemConfig** | Stores global, key-value configuration flags (e.g., verifying if the initial admin setup is complete).     | key serves as the primary key.                                                                                                                    |
 | **User**         | Manages system access, authentication, and Role-Based Access Control (RBAC) (e.g., Admin, TPM, Team Lead). | A composite unique constraint (email + role) ensures an email cannot hold the same role twice, though one user may hold multiple different roles. |
 
-**4.2. Workforce & Hierarchy**
+### **4.2. Workforce & Hierarchy**
 
 Tables defining the structural organization of the staff.
 
@@ -92,7 +72,7 @@ Tables defining the structural organization of the staff.
 | **Employee**    | Tracks the actual workforce associates. Stores operational roles (e.g., Annotator, Stage 1, Stage 2) and assigned datasets. | email is strictly unique; no two employees can share an email.                                                         |
 | **TeamMapping** | Defines the reporting hierarchy linking TPMs to Team Leads, and Team Leads to Associates.                                   | employee_email is unique, enforcing a strict top-down structure where an associate can only have *one* direct manager. |
 
-**4.3. Operations & Project Tracking**
+### **4.3. Operations & Project Tracking**
 
 Tables handling dynamic daily inputs and complex mathematical project blueprints.
 
@@ -101,11 +81,11 @@ Tables handling dynamic daily inputs and complex mathematical project blueprints
 | **Availability** | A transactional table tracking daily employee statuses (e.g., Available, Planned Leave, or working on a specific Track).                        | A composite unique constraint (employee_email + date) ensures only one status can exist per employee per day, preventing duplicate hour calculations.                    |
 | **Track**        | The central blueprint for project management. Stores expected file totals, average processing times, headcount breakdowns, and calculated ETAs. | Highly detailed structure storing headcounts partitioned by Set (1, 2, 3) and Stage (Annotation, S1, S2). Calculates a definitive completion_eta for the entire project. |
 
-**5. Database Configuration & Engine (database.py)**
+## **5. Database Configuration & Engine (database.py)**
 
 The application employs an environment-aware database configuration strategy. This ensures seamless transitions between local development environments and production cloud servers (such as Render or Heroku) without requiring code modifications.
 
-**5.1. Dynamic Connection Routing**
+### **5.1. Dynamic Connection Routing**
 
 - **Production Environment:** The system first attempts to locate a DATABASE_URL environment variable. If found, it establishes a high-performance connection to an external SQL database (e.g., PostgreSQL).
 
@@ -113,15 +93,15 @@ The application employs an environment-aware database configuration strategy. Th
 
 - **Local Development Fallback:** If no environment variable is present, the system defaults to a local SQLite database (data.db). It automatically configures check_same_thread: False to allow Streamlit\'s multi-threaded environment to interact safely with the SQLite file.
 
-**5.2. Session Management**
+### **5.2. Session Management**
 
 The module exports a configured SessionLocal factory. This allows the application to generate isolated database sessions for querying, adding, modifying, and committing data transactions securely.
 
-**6. Application Entry Point & Security Gateway (app.py)**
+## **6. Application Entry Point & Security Gateway (app.py)**
 
 The app.py script serves as the central nervous system and primary security gateway for the Workforce Management System. It is the first file executed when the application boots up. It is responsible for initializing the system, rendering the multi-tenant login interface, managing encrypted browser sessions, and strictly routing authenticated users to their designated operational dashboards.
 
-**6.1. System Initialization & Database Seeding**
+### **6.1. System Initialization & Database Seeding**
 
 Before rendering any UI elements, the script performs critical background operations to ensure the application environment is secure and ready for use:
 
@@ -129,7 +109,7 @@ Before rendering any UI elements, the script performs critical background operat
 
 - **Administrator Seeding:** To prevent system lockouts on a fresh deployment, the create_default_admin function runs immediately. It checks the system_config table for a specific initialization flag. If this is the very first time the app is running, it automatically generates a default \"Root Admin\" account (admin@tcs.com), logs the action, and permanently sets the initialization flag to prevent redundant creations in the future.
 
-**6.2. Session State & Cookie Persistence**
+### **6.2. Session State & Cookie Persistence**
 
 To provide a modern user experience, the system utilizes both Streamlit\'s native session state and an encrypted cookie manager.
 
@@ -137,7 +117,7 @@ To provide a modern user experience, the system utilizes both Streamlit\'s nativ
 
 - **Encrypted Cookies:** The streamlit_cookies_manager securely encrypts and stores the user\'s email and role in their browser cache. Upon revisiting the application, the system automatically decrypts the payload, verifies the user in the database, and bypasses the login screen entirely.
 
-**6.3. Dashboard Routing & The Logout Mechanism**
+### **6.3. Dashboard Routing & The Logout Mechanism**
 
 Once a user is successfully authenticated (either via manual login or cookie retrieval), the script completely hides the Login Flow and engages the Dashboard Flow.
 
@@ -153,11 +133,11 @@ Once a user is successfully authenticated (either via manual login or cookie ret
 
 **Strict Dashboard Routing:** After rendering the persistent sidebar, the main application body acts as a secure traffic controller. It checks the user\'s validated role and routes them directly to the corresponding module view (e.g., executing admin_dashboard(user) or tracklead_dashboard(user)). If, by some unexpected error, a user reaches this stage without a valid role matching their portal, the system throws a final \"Access Denied\" error and halts execution.
 
-**7. Authentication & Role-Based Access Control (app.py)**
+## **7. Authentication & Role-Based Access Control (app.py)**
 
 The system enforces strict security protocols during the login phase to ensure data privacy and hierarchical integrity.
 
-**7.1. The Login Flow**
+### **7.1. The Login Flow**
 
 1.  **Portal Selection:** Unauthenticated users are presented with a sidebar menu to select their specific role portal (Admin, TPM, Team Lead, Track Lead).
 
@@ -165,11 +145,11 @@ The system enforces strict security protocols during the login phase to ensure d
 
 3.  **Access Denial:** If a user attempts to log into a portal not assigned to them (e.g., a Team Lead trying to access the TPM portal), the system will reject the login, even if their password is correct.
 
-**7.2. Dashboard Routing**
+### **7.2. Dashboard Routing**
 
 Once successfully authenticated, the main application loop routes the user to their designated view module (e.g., admin_dashboard(), tpm_dashboard()). A secure logout mechanism is provided, which actively clears the session state and purges the encrypted browser cookies.
 
-**7.3. User Portals & Access Gateways**
+### **7.3. User Portals & Access Gateways**
 
 The application utilizes a multi-tenant login interface. To ensure users are directed strictly to the tools relevant to their operational duties, they must select their designated role portal from the sidebar menu before entering their credentials. Each portal serves as a secure gateway to a dedicated, role-specific dashboard:
 
@@ -181,13 +161,13 @@ The application utilizes a multi-tenant login interface. To ensure users are dir
 
 - **📝 Track Lead Login (tracklead):** The gateway for Track Leads. This portal routes to the tracklead_dashboard. It provides specialized tools for overseeing specific project tracks, managing file allocations, balancing headcounts across different datasets/stages, and monitoring calculated stage-by-stage completion ETAs.
 
-**8. Admin Portal Dashboard (admin_page.py)**
+## **8. Admin Portal Dashboard (admin_page.py)**
 
 The Admin Portal serves as the central command center for the Workforce Management System. It provides system administrators with specialized tools to provision access, structure the organizational hierarchy, and manage all core data tables.
 
 The dashboard is divided into five primary functional tabs:
 
-**8.1. Create User (Access Provisioning)**
+### **8.1. Create User (Access Provisioning)**
 
 This tab is designed to provision application access for management personnel.
 
@@ -201,7 +181,7 @@ This tab is designed to provision application access for management personnel.
 
 - **Role-Conflict Security:** The system enforces strict business logic regarding role assignment. While a single email address can hold multiple roles, it **cannot** act as both a TPM and a Team Lead simultaneously. An individual can, however, be a TPM + Track Lead, or a Team Lead + Track Lead.
 
-**8.2. Add Associate (Workforce Provisioning)**
+### **8.2. Add Associate (Workforce Provisioning)**
 
 This tab handles the onboarding of the standard production workforce (who do not require system login access).
 
@@ -211,7 +191,7 @@ This tab handles the onboarding of the standard production workforce (who do not
 
 - **Data Integrity:** The system ensures that every email address entered in the employee table is absolutely unique to prevent data corruption during mapping and hours tracking.
 
-**8.3. Map Associates (Hierarchy Management)**
+### **8.3. Map Associates (Hierarchy Management)**
 
 This module builds the operational reporting structure, enabling the filtering logic used in the downstream dashboards. It uses a strict top-down linking approach preventing double-mapping (an associate or lead can only report to one manager). All established relationships and hierarchical links generated in this module are permanently saved to the "TeamMapping" database table.
 
@@ -219,7 +199,7 @@ This module builds the operational reporting structure, enabling the filtering l
 
 - **Language Team Lead ⇄ Associates:** Administrators select a single Team Lead and map multiple workforce associates to them. The system filters out "login_users" (managers) to ensure only valid operational workers are placed at the bottom of the hierarchy.
 
-**8.4. View/Edit Dashboard (Data Management)**
+### **8.4. View/Edit Dashboard (Data Management)**
 
 A comprehensive suite of interactive data grids allowing the administrator to perform CRUD (Create, Read, Update, Delete) operations directly on the database.
 
@@ -243,17 +223,17 @@ Following are the core functionalities & business logic:
 
 - **Track Details:** Provides a read-only, high-level overview of the mathematical blueprints and ETAs for all planned project tracks.
 
-**8.5. Change Password**
+### **8.5. Change Password**
 
 A secure utility for the active administrator to update their own system password. It requires the validation of the old password and ensures the new password is confirmed twice before committing the change to the database.
 
-**9. TPM Portal Dashboard (tpm_page.py)**
+## **9. TPM Portal Dashboard (tpm_page.py)**
 
 The Technical Project Manager (TPM) Dashboard provides specialized, mid-level management tools designed for high-level operational visibility and schedule management. This interface allows TPMs to oversee their direct reports (Language Team Leads) and maintain accurate, day-by-day workforce availability data to assist in project ETA planning.
 
 The dashboard consists of three primary functional tabs:
 
-**9.1. Update Availability & Status Tracking**
+### **9.1. Update Availability & Status Tracking**
 
 This tab serves as the primary data entry point for future scheduling and leave management. The system enforces a standardized list of operational statuses to ensure consistent tracking across the entire workforce.
 
@@ -285,7 +265,7 @@ The TPM can apply these statuses across custom date ranges using two distinct wo
 
 3.  **Smart Date Processing:** For both workflows, when a date range is submitted, the backend logic automatically loops through the calendar and filters out weekends. It queries the "Availability" table, intelligently overwriting existing statuses or inserting new records exclusively for valid workdays (Monday--Friday).
 
-**9.2. View/Edit Dashboard (Bulk Schedule Matrix)**
+### **9.2. View/Edit Dashboard (Bulk Schedule Matrix)**
 
 This tab generates an interactive, pivot-style data grid designed for rapid schedule audits and bulk modifications across the TPM\'s entire reporting tree.
 
@@ -295,19 +275,19 @@ This tab generates an interactive, pivot-style data grid designed for rapid sche
 
 - **Inline Editing & Differential Commits:** TPMs can alter the status of any subordinate on any specific day using interactive dropdowns inside the grid. To optimize database performance and prevent system lag, the \"Save Changes\" function performs a differential check, comparing the newly edited grid against the original dataset. It generates SQL COMMIT commands *only* for the specific cells that were modified.
 
-**9.3. Change Password**
+### **9.3. Change Password**
 
 A self-service security utility for the TPM to manage their account credentials.
 
 **Validation Logic:** Requires the user to correctly input their current password before allowing a change. The system validates that the new password and the confirmation password match exactly, and ensures the new password is distinct from the old one before committing the secure update to the "User" table.
 
-**10. Team Lead Portal Dashboard (teamlead_page.py)**
+## **10. Team Lead Portal Dashboard (teamlead_page.py)**
 
 The Team Lead Dashboard provides targeted, ground-level management tools. This interface is specifically designed for the day-to-day operational tracking of the core production workforce. It allows Language Team Leads to manage their own schedules and meticulously track the daily availability of their direct reports (Associates) to ensure accurate shift and resource management.
 
 The dashboard consists of three primary functional tabs:
 
-**10.1. Update Availability & Status Tracking**
+### **10.1. Update Availability & Status Tracking**
 
 This tab serves as the primary data entry point for associate scheduling and leave management. To maintain data consistency across the entire organization, the system enforces a standardized list of operational statuses.
 
@@ -337,7 +317,7 @@ The Team Lead can apply these statuses across custom date ranges using two stric
 
 3.  **Smart Calendar Processing:** For both workflows, when a date range is submitted, the backend logic automatically iterates through the calendar and completely skips weekends (Saturdays and Sundays). It intelligently updates the "Availability" table by overwriting existing records or inserting new ones exclusively for valid operational workdays.
 
-**10.2. View/Edit Dashboard (Bulk Schedule Matrix)**
+### **10.2. View/Edit Dashboard (Bulk Schedule Matrix)**
 
 This tab generates an interactive, pivot-style data grid designed for rapid schedule audits, weekly resource planning, and bulk modifications at the team level.
 
@@ -347,19 +327,19 @@ This tab generates an interactive, pivot-style data grid designed for rapid sche
 
 - **Inline Editing & Differential Commits:** Team Leads can quickly adjust the status of any associate on any specific day directly within the grid. The \"Save Changes\" function employs a highly efficient differential database commit strategy. It compares the newly edited grid against the original dataset in memory, executing SQL updates *only* for the specific cells that were altered. This drastically reduces database load.
 
-**10.3. Change Password**
+### **10.3. Change Password**
 
 A self-service security utility for the Team Lead to manage their system credentials.
 
 **Validation Logic:** To execute a password change, the user must correctly input their current password to verify their identity. The system then validates that the new password matches the confirmation field exactly, ensures no fields are left blank, and verifies that the new password is distinct from the previous one before securely committing the update to the "User" table.
 
-**11. Track Lead Portal Dashboard (tracklead_page.py)**
+## **11. Track Lead Portal Dashboard (tracklead_page.py)**
 
 The Track Lead interface is the most functionally complex module in the application. It acts as a project planning engine that handles resource allocation, algorithmic simulations for completion dates, and dynamic calendar blocking.
 
 The dashboard operates across three distinct tabs:
 
-**11.1. Track Planning (The ETA Engine)**
+### **11.1. Track Planning (The ETA Engine)**
 
 This tab allows Track Leads to build a project from scratch and simulate its timeline.
 
@@ -419,7 +399,7 @@ When the user clicks \"Calculate ETA\", the system runs a highly complex backgro
 
 - **Overwrite Logic:** If a track with the exact same Name and Start Date already exists in the database, the code automatically updates the existing record rather than creating a duplicate.
 
-**11.2. View/Edit Dashboard (Track Management)**
+### **11.2. View/Edit Dashboard (Track Management)**
 
 This tab provides a secure management console for ongoing tracks.
 
@@ -433,7 +413,7 @@ This tab provides a secure management console for ongoing tracks.
 
   - **Functionality:** The authorized lead can select specific employees from their assigned pool and change their status for a specific date range. For example, if S1 reviews finish three days before the calculated ETA, the lead can change those S1 employees\' statuses from the \"Track Name\" back to \"Available,\" instantly releasing them to the company-wide resource pool.
 
-**11.3. Change Password**
+### **11.3. Change Password**
 
 A self-service security utility for the Track Lead.
 
