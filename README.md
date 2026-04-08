@@ -10,29 +10,25 @@ The Workforce Management System follows a modular, scalable architecture designe
 
 The repository is organized as follows:
 
-**WORKFORCE-MANAGEMENT-SYSTEM/**
-
-**│**
-**├── .streamlit/**
-**│ └── config.toml** *\#Application-level configuration*
-**│**
-**├── data/**
-**│ └── data.db** *\#Local SQLite database for localhost*
-**│**
-**├── database/**
-**│ ├── \_\_init\_\_.py**
-**│ ├── database.py** *\#Database connection engine and session management*
-**│ └── models.py** *\#ORM models defining the database schema and relationships*
-**│**
-**├── views/**
-**│ ├── \_\_init\_\_.py**
-**│ ├── admin_page.py** *\#Interface and logic for System Administrators*
-**│ ├── teamlead_page.py** *\#Interface for Language Team Leads*
-**│ ├── tpm_page.py** *\#Interface for Technical Program Managers*
-**│ └── tracklead_page.py** *\#Interface for Track Lead for ETA planning*
-**│**
-**├── app.py** *\#Main application entry point and routing handler*
-**└── requirements.txt** *\#Project dependencies and library versions*
+```
+WORKFORCE-MANAGEMENT-SYSTEM/
+├── .streamlit/
+│   └── config.toml           # Application-level configuration
+├── data/
+│   └── data.db               # Local SQLite database for localhost
+├── database/
+│   ├── __init__.py
+│   ├── database.py           # Database connection engine and session management
+│   └── models.py             # ORM models defining the database schema and relationships
+├── views/
+│   ├── __init__.py
+│   ├── admin_page.py         # Interface and logic for System Administrators
+│   ├── teamlead_page.py      # Interface for Language Team Leads
+│   ├── tpm_page.py           # Interface for Technical Program Managers
+│   └── tracklead_page.py     # Interface for Track Lead for ETA planning
+├── app.py                    # Main application entry point and routing handler
+└── requirements.txt          # Project dependencies and library versions
+```
 
 ## **3. Environment & Core Dependencies**
 
